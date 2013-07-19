@@ -327,6 +327,11 @@ public class Fight
 			_hasLeft = hasLeft;
 		}
 
+		public boolean isMob()
+		{
+			return (_mob!=null);
+		}
+		
 		public Personnage getPersonnage()
 		{
 			if(_type == 1)
@@ -3325,6 +3330,8 @@ public class Fight
 				{
 					Thread.sleep(1000);
 				}catch(Exception E){};
+				if(player.getQuestList().size() >0) 
+					player.applyQuest(looseTeam);
 				if(_type != Constants.FIGHT_TYPE_CHALLENGE) player.get_curCarte().applyEndFightAction(_type, F.getPersonnage());
 				
 				try

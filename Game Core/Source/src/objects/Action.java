@@ -470,11 +470,12 @@ public class Action {
 			case 23://UnlearnJob
 				try
 				{
-					int Job = Integer.parseInt(args);
+					final int Job = Integer.parseInt(args);
 					if(Job < 1) return;
-					StatsMetier m = perso.getMetierByID(Job);
-					if(m == null) return;
-					perso.unlearnJob(m.getID());
+					final StatsMetier job = perso.getMetierByID(Job);
+					if(job == null) return;
+					perso.unlearnJob(job.getID());
+					SocketManager.GAME_SEND_JR_PACKET(perso, job.getTemplate().getId());
 					SocketManager.GAME_SEND_STATS_PACKET(perso);
 					SQLManager.SAVE_PERSONNAGE(perso, false);
 				}catch(Exception e){GameServer.addToLog(e.getMessage());};

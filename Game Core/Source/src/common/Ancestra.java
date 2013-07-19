@@ -94,6 +94,8 @@ public class Ancestra {
 	public static BufferedWriter Log_Shop;
 	public static PrintStream Log_Errors;
 	public static boolean canLog;
+	//Others
+	public static boolean spawnWithEmote = false;
 	
 	static{
 		Runtime.getRuntime().addShutdownHook(new Thread()
@@ -346,6 +348,8 @@ public class Ancestra {
 				}else if (param.equalsIgnoreCase("USE_SUBSCRIBE"))
 				{
 					Ancestra.USE_SUBSCRIBE = value.equalsIgnoreCase("true");
+				}else if(param.equalsIgnoreCase("spawnWithEmote")){
+					Ancestra.spawnWithEmote = value.equalsIgnoreCase("true");
 				}
 			}
 			if(REALM_IP == null || REALM_DB_HOST  == null || REALM_DB_NAME  == null || REALM_DB_USER  == null || REALM_DB_PASS  == null ||

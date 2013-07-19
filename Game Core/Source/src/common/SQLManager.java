@@ -3033,5 +3033,55 @@ public class SQLManager {
     			e.printStackTrace();
     		}
     	}
+    	public static void LOAD_QUEST_DATA() 
+    	{
+    		try {
+   				final ResultSet RS = SQLManager.executeQuery("SELECT * from quests_data;", Ancestra.DB_NAME);
+   				while (RS.next()) {
+   					World.addQuest(new Quest(RS.getInt("id"),  
+    						RS.getString("conditions"), 
+    						RS.getString("steps")));
+    			}
+   				closeResultSet(RS);
+   			} catch (final SQLException e) {
+   				GameServer.addToLog("SQL ERROR: " + e.getMessage());
+   				e.printStackTrace();
+   			}
+    	}
+
+    	public static void LOAD_QUEST_STEP()
+    	{
+   			try {
+   				final ResultSet RS = SQLManager.executeQuery("SELECT * from quest_steps;", Ancestra.DB_NAME);
+    			while (RS.next()) {
+    				World.addQuestSteps(new QuestStep(RS.getInt("id"), 
+    						RS.getInt("dialogue"), 
+    						RS.getInt("gainkamas"), 
+    						RS.getInt("gainxp"), 
+    						RS.getString("gainobjet"), 
+   							RS.getString("objectifs")));
+   				}
+    			closeResultSet(RS);
+    		} catch (final SQLException e) {
+    			GameServer.addToLog("SQL ERROR: " + e.getMessage());
+    			e.printStackTrace();
+    		}
+    	}
+
+    	public static void LOAD_QUEST_OBJECTIFS()
+    	{
+   			try {
+   				final ResultSet RS = SQLManager.executeQuery("SELECT * from quest_objectifs;", Ancestra.DB_NAME);
+   				while (RS.next()) {
+    				World.addQuestObjectives(new QuestObjective(RS.getInt("id"), 
+    						RS.getInt("type"), 
+    						RS.getString("arguments")));
+   				}
+   				closeResultSet(RS);
+   			} catch (final SQLException e) {
+   				GameServer.addToLog("SQL ERROR: " + e.getMessage());
+    			e.printStackTrace();
+    		}
+    	}
 }
 

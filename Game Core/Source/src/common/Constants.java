@@ -20,7 +20,7 @@ public class Constants
 	//DEBUG
 	public static int DEBUG_MAP_LIMIT 	=	20000;
 	//Server
-	public static final String SERVER_VERSION	=	"1.0.0";
+	public static final String SERVER_VERSION	=	"1.0.1";
 	//Versions
 	public static final	String CLIENT_VERSION	=	"1.29.1";
 	//ZAAPI <alignID,{mapID,mapID,...,mapID}>
@@ -750,7 +750,7 @@ public class Constants
 	
 	public static int getBasePdv(int classID)
 	{
-		return 50;
+		return 55;
 	}
 
 	public static int getReqPtsToBoostStatsByClass(int classID,int statID,int val)
@@ -3425,5 +3425,81 @@ public class Constants
 		}
 		return JobID;
 		
+	}
+	
+	public static int getBonusBreedWeapon(int breed, int type) {
+		int percentPredilection = 90;
+		switch(breed)
+		{
+		case Constants.CLASS_CRA:
+			if(type == Constants.ITEM_TYPE_DAGUES)
+				percentPredilection += 5;
+			if(type == Constants.ITEM_TYPE_ARC)
+				percentPredilection += 10;
+			break;
+		case Constants.CLASS_ECAFLIP:
+			if(type == Constants.ITEM_TYPE_DAGUES)
+				percentPredilection += 5;
+			if(type == Constants.ITEM_TYPE_EPEE)
+				percentPredilection += 10;
+			break;
+		case Constants.CLASS_ENIRIPSA:
+			if(type == Constants.ITEM_TYPE_BATON)
+				percentPredilection += 5;
+			if(type == Constants.ITEM_TYPE_BAGUETTE)
+				percentPredilection += 10;
+			break;
+		case Constants.CLASS_ENUTROF:
+			if(type == Constants.ITEM_TYPE_MARTEAU)
+				percentPredilection += 5;
+			if(type == Constants.ITEM_TYPE_PELLE)
+				percentPredilection += 10;
+			break;
+		case Constants.CLASS_FECA:
+			if(type == Constants.ITEM_TYPE_BAGUETTE)
+				percentPredilection += 5;
+			if(type == Constants.ITEM_TYPE_BATON)
+				percentPredilection += 10;
+			break;
+		case Constants.CLASS_IOP:
+			if(type == Constants.ITEM_TYPE_MARTEAU)
+				percentPredilection += 5;
+			if(type == Constants.ITEM_TYPE_EPEE)
+				percentPredilection += 10;
+			break;
+		case Constants.CLASS_OSAMODAS:
+			if(type == Constants.ITEM_TYPE_BATON)
+				percentPredilection += 5;
+			if(type == Constants.ITEM_TYPE_MARTEAU)
+				percentPredilection += 10;
+			break;
+		case Constants.CLASS_PANDAWA:
+			if(type == Constants.ITEM_TYPE_BATON)
+				percentPredilection += 5;
+			if(type == Constants.ITEM_TYPE_HACHE)
+				percentPredilection += 10;
+			break;
+		case Constants.CLASS_SACRIEUR:
+			break;
+		case Constants.CLASS_SADIDA:
+			if(type == Constants.ITEM_TYPE_BAGUETTE)
+				percentPredilection += 5;
+			if(type == Constants.ITEM_TYPE_BATON)
+				percentPredilection += 10;
+			break;
+		case Constants.CLASS_SRAM:
+			if(type == Constants.ITEM_TYPE_ARC)
+				percentPredilection += 5;
+			if(type == Constants.ITEM_TYPE_DAGUES)
+				percentPredilection += 10;
+			break;
+		case Constants.CLASS_XELOR:
+			if(type == Constants.ITEM_TYPE_BAGUETTE)
+				percentPredilection += 5;
+			if(type == Constants.ITEM_TYPE_MARTEAU)
+				percentPredilection += 10;
+			break;
+		}
+		return percentPredilection;
 	}
 }

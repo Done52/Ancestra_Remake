@@ -1,0 +1,7 @@
+[1.0.0+]
+- Correction du getBasePdv(); c'est 55 et non 50.
+- Correction de la perte des points d'honneur quand ont désactive l'alignement (-5%).
+- Si on a un amis/ennemies qui est en combat, ont le voit désormais dans le panel.
+- Plus besoin de changé de map ou de se déco/reco quand on active son alignement.
+- Ajout des quêtes (Game_Quest.SQL).
+- Ajout des bonus d'arme (Prédiction de classe).

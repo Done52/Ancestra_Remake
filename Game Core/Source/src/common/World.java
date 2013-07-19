@@ -63,7 +63,10 @@ public class World {
 	private static StringBuilder Challenges = new StringBuilder();
 	private static Map<Integer,Collection<Integer>> CraftBook	= new TreeMap<Integer,Collection<Integer>>();
 	private static Map<Integer, Gift> Gifts = new HashMap<Integer, Gift>();
-	
+	private static Map<Integer,Quest> Quests = new TreeMap<Integer,Quest>();
+	private static Map<Integer,QuestStep> QuestSteps = new TreeMap<Integer,QuestStep>();
+	private static Map<Integer,QuestObjective> QuestObjectives = new TreeMap<Integer,QuestObjective>();
+
 	private static int saveTry = 1;
 	
 	private static byte _GmAccess = 0;
@@ -765,6 +768,12 @@ public class World {
 		System.out.print("Chargement des pets: ");
 		nbr = SQLManager.LOAD_PETS_ENTRY();
 		System.out.println(nbr+" pets charges");
+		
+		System.out.println("Chargement des objectifs de quete: ");
+		SQLManager.LOAD_QUEST_OBJECTIFS();
+		SQLManager.LOAD_QUEST_STEP();
+		SQLManager.LOAD_QUEST_DATA();
+		System.out.println(Quests.size() + " quete charges");
 		
 		nextObjetID = SQLManager.getNextObjetID();
 	}
@@ -1967,4 +1976,28 @@ public class World {
 	{
 		Gifts.put(gift.getId(), gift);
 	}
+	
+	public static void addQuest(final Quest quest) {
+	    Quests.put(quest.getId(), quest);
+    }
+
+	public static Map<Integer, Quest> getQuests() {
+	    return Quests;
+    }
+
+	public static void addQuestSteps(final QuestStep questStep) {
+	    QuestSteps.put(questStep.getId(), questStep);
+    }
+
+	public static Map<Integer, QuestStep> getQuestSteps() {
+	    return QuestSteps;
+    }
+
+	public static void addQuestObjectives(final QuestObjective questObjective) {
+	    QuestObjectives.put(questObjective.getId(), questObjective);
+    }
+
+	public static Map<Integer, QuestObjective> getQuestObjectives() {
+	    return QuestObjectives;
+    }
 }

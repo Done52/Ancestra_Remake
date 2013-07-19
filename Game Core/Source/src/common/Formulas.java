@@ -73,261 +73,245 @@ public class Formulas {
 		return (int)(jet * (100 + statC) / 100 + soins);
 	}
 	
-	public static int calculFinalDommage(Fight fight,Fighter caster,Fighter target,int statID,int jet,boolean isHeal, boolean isCaC, int spellid)
-	{
-		float i = 0;//Bonus maitrise
-		float j = 100; //Bonus de Classe
-		float a = 1;//Calcul
-		float num = 0;
-		float statC = 0, domC = 0, perdomC = 0, resfT = 0, respT = 0;
-		int multiplier = 0;
-		if(!isHeal)
-		{
-			domC = caster.getTotalStats().getEffect(Constants.STATS_ADD_DOMA);
-			perdomC = caster.getTotalStats().getEffect(Constants.STATS_ADD_PERDOM);
-			multiplier = caster.getTotalStats().getEffect(Constants.STATS_MULTIPLY_DOMMAGE);
-		}else
-		{
-			domC = caster.getTotalStats().getEffect(Constants.STATS_ADD_SOIN);
-		}
-		
-		switch(statID)
-		{
-			case Constants.ELEMENT_NULL://Fixe
-				statC = 0;
-				resfT = 0;
-				respT = 0;
-				respT = 0;
-			break;
-			case Constants.ELEMENT_NEUTRE://neutre
-				statC = caster.getTotalStats().getEffect(Constants.STATS_ADD_FORC);
-				resfT = target.getTotalStats().getEffect(Constants.STATS_ADD_R_NEU);
-				respT = target.getTotalStats().getEffect(Constants.STATS_ADD_RP_NEU);
-				if(caster.getPersonnage() != null)//Si c'est un joueur
-				{
-					respT += target.getTotalStats().getEffect(Constants.STATS_ADD_RP_PVP_NEU);
-					resfT += target.getTotalStats().getEffect(Constants.STATS_ADD_R_PVP_NEU);
-				}
-				//on ajoute les dom Physique
-				domC += caster.getTotalStats().getEffect(142);
-				//Ajout de la resist Physique
-				resfT = target.getTotalStats().getEffect(184);
-			break;
-			case Constants.ELEMENT_TERRE://force
-				statC = caster.getTotalStats().getEffect(Constants.STATS_ADD_FORC);
-				resfT = target.getTotalStats().getEffect(Constants.STATS_ADD_R_TER);
-				respT = target.getTotalStats().getEffect(Constants.STATS_ADD_RP_TER);
-				if(caster.getPersonnage() != null)//Si c'est un joueur
-				{
-					respT += target.getTotalStats().getEffect(Constants.STATS_ADD_RP_PVP_TER);
-					resfT += target.getTotalStats().getEffect(Constants.STATS_ADD_R_PVP_TER);
-				}
-				//on ajout les dom Physique
-				domC += caster.getTotalStats().getEffect(142);
-				//Ajout de la resist Physique
-				resfT = target.getTotalStats().getEffect(184);
-			break;
-			case Constants.ELEMENT_EAU://chance
-				statC = caster.getTotalStats().getEffect(Constants.STATS_ADD_CHAN);
-				resfT = target.getTotalStats().getEffect(Constants.STATS_ADD_R_EAU);
-				respT = target.getTotalStats().getEffect(Constants.STATS_ADD_RP_EAU);
-				if(caster.getPersonnage() != null)//Si c'est un joueur
-				{
-					respT += target.getTotalStats().getEffect(Constants.STATS_ADD_RP_PVP_EAU);
-					resfT += target.getTotalStats().getEffect(Constants.STATS_ADD_R_PVP_EAU);
-				}
-				//Ajout de la resist Magique
-				resfT = target.getTotalStats().getEffect(183);
-			break;
-			case Constants.ELEMENT_FEU://intell
-				statC = caster.getTotalStats().getEffect(Constants.STATS_ADD_INTE);
-				resfT = target.getTotalStats().getEffect(Constants.STATS_ADD_R_FEU);
-				respT = target.getTotalStats().getEffect(Constants.STATS_ADD_RP_FEU);
-				if(caster.getPersonnage() != null)//Si c'est un joueur
-				{
-					respT += target.getTotalStats().getEffect(Constants.STATS_ADD_RP_PVP_FEU);
-					resfT += target.getTotalStats().getEffect(Constants.STATS_ADD_R_PVP_FEU);
-				}
-				//Ajout de la resist Magique
-				resfT = target.getTotalStats().getEffect(183);
-			break;
-			case Constants.ELEMENT_AIR://agilité
-				statC = caster.getTotalStats().getEffect(Constants.STATS_ADD_AGIL);
-				resfT = target.getTotalStats().getEffect(Constants.STATS_ADD_R_AIR);
-				respT = target.getTotalStats().getEffect(Constants.STATS_ADD_RP_AIR);
-				if(caster.getPersonnage() != null)//Si c'est un joueur
-				{
-					respT += target.getTotalStats().getEffect(Constants.STATS_ADD_RP_PVP_AIR);
-					resfT += target.getTotalStats().getEffect(Constants.STATS_ADD_R_PVP_AIR);
-				}
-				//Ajout de la resist Magique
-				resfT = target.getTotalStats().getEffect(183);
-			break;
-		}
-		//On bride la resistance a 50% si c'est un joueur 
-		if(target.getMob() == null && respT >50)respT = 50;
-		
-		if(statC<0)statC=0;
-		/* DEBUG
-		System.out.println("Jet: "+jet+" Stats: "+statC+" perdomC: "+perdomC+" multiplier: "+multiplier);
-		System.out.println("(100 + statC + perdomC)= "+(100 + statC + perdomC));
-		System.out.println("(jet * (100 + statC + perdomC + (multiplier*100) ) / 100)= "+(jet * ((100 + statC + perdomC) / 100 )));
-		System.out.println("res Fix. T "+ resfT);
-		System.out.println("res %age T "+respT);
-		if(target.getMob() != null)
-		{
-			System.out.println("resmonstre: "+target.getMob().getStats().getEffect(Constants.STATS_ADD_RP_FEU));
-			System.out.println("TotalStat: "+target.getTotalStats().getEffect(Constants.STATS_ADD_RP_FEU));
-			System.out.println("FightStat: "+target.getTotalStatsLessBuff().getEffect(Constants.STATS_ADD_RP_FEU));
+    public static int calculFinalDommage(Fight fight, Fighter caster, Fighter target, int statID, int jet, boolean isHeal, boolean isCaC, int spellid)
+    {
+        float a = 1;//Calcul
+        float num = 0;
+        float statC = 0, domC = 0, perdomC = 0, resfT = 0, respT = 0;
+        int multiplier = 0;
+        if (!isHeal)
+        {
+            domC = caster.getTotalStats().getEffect(Constants.STATS_ADD_DOMA);
+            perdomC = caster.getTotalStats().getEffect(Constants.STATS_ADD_PERDOM);
+            multiplier = caster.getTotalStats().getEffect(Constants.STATS_MULTIPLY_DOMMAGE);
+        }
+        else
+        {
+            domC = caster.getTotalStats().getEffect(Constants.STATS_ADD_SOIN);
+        }
+
+        switch (statID)
+        {
+            case Constants.ELEMENT_NULL://Fixe
+                statC = 0;
+                resfT = 0;
+                respT = 0;
+                respT = 0;
+                break;
+            case Constants.ELEMENT_NEUTRE://neutre
+                statC = caster.getTotalStats().getEffect(Constants.STATS_ADD_FORC);
+                resfT = target.getTotalStats().getEffect(Constants.STATS_ADD_R_NEU);
+                respT = target.getTotalStats().getEffect(Constants.STATS_ADD_RP_NEU);
+                if (caster.getPersonnage() != null)//Si c'est un joueur
+                {
+                    respT += target.getTotalStats().getEffect(Constants.STATS_ADD_RP_PVP_NEU);
+                    resfT += target.getTotalStats().getEffect(Constants.STATS_ADD_R_PVP_NEU);
+                }
+                //on ajoute les dom Physique
+                domC += caster.getTotalStats().getEffect(142);
+                //Ajout de la resist Physique
+                resfT = target.getTotalStats().getEffect(184);
+                break;
+            case Constants.ELEMENT_TERRE://force
+                statC = caster.getTotalStats().getEffect(Constants.STATS_ADD_FORC);
+                resfT = target.getTotalStats().getEffect(Constants.STATS_ADD_R_TER);
+                respT = target.getTotalStats().getEffect(Constants.STATS_ADD_RP_TER);
+                if (caster.getPersonnage() != null)//Si c'est un joueur
+                {
+                    respT += target.getTotalStats().getEffect(Constants.STATS_ADD_RP_PVP_TER);
+                    resfT += target.getTotalStats().getEffect(Constants.STATS_ADD_R_PVP_TER);
+                }
+                //on ajout les dom Physique
+                domC += caster.getTotalStats().getEffect(142);
+                //Ajout de la resist Physique
+                resfT = target.getTotalStats().getEffect(184);
+                break;
+            case Constants.ELEMENT_EAU://chance
+                statC = caster.getTotalStats().getEffect(Constants.STATS_ADD_CHAN);
+                resfT = target.getTotalStats().getEffect(Constants.STATS_ADD_R_EAU);
+                respT = target.getTotalStats().getEffect(Constants.STATS_ADD_RP_EAU);
+                if (caster.getPersonnage() != null)//Si c'est un joueur
+                {
+                    respT += target.getTotalStats().getEffect(Constants.STATS_ADD_RP_PVP_EAU);
+                    resfT += target.getTotalStats().getEffect(Constants.STATS_ADD_R_PVP_EAU);
+                }
+                //Ajout de la resist Magique
+                resfT = target.getTotalStats().getEffect(183);
+                break;
+            case Constants.ELEMENT_FEU://intell
+                statC = caster.getTotalStats().getEffect(Constants.STATS_ADD_INTE);
+                resfT = target.getTotalStats().getEffect(Constants.STATS_ADD_R_FEU);
+                respT = target.getTotalStats().getEffect(Constants.STATS_ADD_RP_FEU);
+                if (caster.getPersonnage() != null)//Si c'est un joueur
+                {
+                    respT += target.getTotalStats().getEffect(Constants.STATS_ADD_RP_PVP_FEU);
+                    resfT += target.getTotalStats().getEffect(Constants.STATS_ADD_R_PVP_FEU);
+                }
+                //Ajout de la resist Magique
+                resfT = target.getTotalStats().getEffect(183);
+                break;
+            case Constants.ELEMENT_AIR://agilitï¿½
+                statC = caster.getTotalStats().getEffect(Constants.STATS_ADD_AGIL);
+                resfT = target.getTotalStats().getEffect(Constants.STATS_ADD_R_AIR);
+                respT = target.getTotalStats().getEffect(Constants.STATS_ADD_RP_AIR);
+                if (caster.getPersonnage() != null)//Si c'est un joueur
+                {
+                    respT += target.getTotalStats().getEffect(Constants.STATS_ADD_RP_PVP_AIR);
+                    resfT += target.getTotalStats().getEffect(Constants.STATS_ADD_R_PVP_AIR);
+                }
+                //Ajout de la resist Magique
+                resfT = target.getTotalStats().getEffect(183);
+                break;
+        }
+        //On bride la resistance a 50% si c'est un joueur
+        if (target.getMob() == null && respT > 50) respT = 50;
+
+        if (statC < 0) statC = 0;
+        if (caster.getPersonnage() != null && isCaC)
+        {
+            int ArmeType = caster.getPersonnage().getObjetByPos(1).getTemplate().getType();
+			int bonusSkill = 0;
+			int bonusBreed = Constants.getBonusBreedWeapon(caster.getPersonnage().get_classe(), ArmeType);
 			
-		}
-		//*/
-			if(caster.getPersonnage() != null && isCaC)
-			{
-			int ArmeType = caster.getPersonnage().getObjetByPos(1).getTemplate().getType();
-			
-			if((caster.getSpellValueBool(392) == true) && ArmeType == 2)//ARC
-			{
-				i = caster.getMaitriseDmg(392);
-			}
-			if((caster.getSpellValueBool(390) == true) && ArmeType == 4)//BATON
-			{
-				i = caster.getMaitriseDmg(390);
-			}
-			if((caster.getSpellValueBool(391) == true) && ArmeType == 6)//EPEE
-			{
-				i = caster.getMaitriseDmg(391);
-			}
-			if((caster.getSpellValueBool(393) == true) && ArmeType == 7)//MARTEAUX
-			{
-				i = caster.getMaitriseDmg(393);
-			}
-			if((caster.getSpellValueBool(394) == true) && ArmeType == 3)//BAGUETTE
-			{
-				i = caster.getMaitriseDmg(394);
-			}
-			if((caster.getSpellValueBool(395) == true) && ArmeType == 5)//DAGUES
-			{
-				i = caster.getMaitriseDmg(395);
-			}
-			if((caster.getSpellValueBool(396) == true) && ArmeType == 8)//PELLE
-			{
-				i = caster.getMaitriseDmg(396);
-			}
-			if((caster.getSpellValueBool(397) == true) && ArmeType == 19)//HACHE
-			{
-				i = caster.getMaitriseDmg(397);
-			}
-				a = (((100+i)/100)*(j/100));
-			}
-			
-			num = a*(jet * ((100 + statC + perdomC + (multiplier*100)) / 100 ))+ domC;//dégats bruts
-			
-		//Poisons
-		if(spellid != -1)
-		{
-			switch(spellid)
-			{
-				/* 
-				 * case [SPELLID]: 
-				 * statC = caster.getTotalStats().getEffect([EFFECT]) 
-				 * num = (jet * ((100 + statC + perdomC + (multiplier*100)) / 100 ))+ domC; 
-				 * return (int) num; 
-				 */
-				case 66 : 
-				statC = caster.getTotalStats().getEffect(Constants.STATS_ADD_AGIL);
-				num = (jet * ((100 + statC + perdomC + (multiplier*100)) / 100 ))+ domC;
-				if(target.hasBuff(105))
-				{
-					SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getGUID()+"", target.getGUID()+","+target.getBuff(105).getValue());
-					return 0;
-				}
-				if(target.hasBuff(184))
-				{
-					SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getGUID()+"", target.getGUID()+","+target.getBuff(184).getValue());
-					return 0;
-				}
-				return (int) num;
-				
-				case 71 :
-				case 196:
-				case 219:
-					statC = caster.getTotalStats().getEffect(Constants.STATS_ADD_FORC);
-					num = (jet * ((100 + statC + perdomC + (multiplier*100)) / 100 ))+ domC;
-					if(target.hasBuff(105))
-					{
-						SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getGUID()+"", target.getGUID()+","+target.getBuff(105).getValue());
-						return 0;
-					}
-					if(target.hasBuff(184))
-					{
-						SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getGUID()+"", target.getGUID()+","+target.getBuff(184).getValue());
-						return 0;
-					}
-				return (int) num;
-				
-				case 181:
-				case 200:
-					statC = caster.getTotalStats().getEffect(Constants.STATS_ADD_INTE);
-					num = (jet * ((100 + statC + perdomC + (multiplier*100)) / 100 ))+ domC;
-					if(target.hasBuff(105))
-					{
-						SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getGUID()+"", target.getGUID()+","+target.getBuff(105).getValue());
-						return 0;
-					}
-					if(target.hasBuff(184))
-					{
-						SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getGUID()+"", target.getGUID()+","+target.getBuff(184).getValue());
-						return 0;
-					}
-				return (int) num;
-			}
-		}
-		//Renvoie
-		int renvoie = target.getTotalStatsLessBuff().getEffect(Constants.STATS_RETDOM);
-		if(renvoie >0 && !isHeal)
-		{
-			if(renvoie > num)renvoie = (int)num;
-			num -= renvoie;
-			SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 107, "-1", target.getGUID()+","+renvoie);
-			if(renvoie>caster.getPDV())renvoie = caster.getPDV();
-			if(num<1)num =0;
-			caster.removePDV(renvoie);
-			SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 100, caster.getGUID()+"", caster.getGUID()+",-"+renvoie);
-		}
-		
-		if(!isHeal)num -= resfT;//resis fixe
-		int reduc =	(int)((num/(float)100)*respT);//Reduc %resis
-		if(!isHeal)num -= reduc;
-		
-		int armor = getArmorResist(target,statID);
-		if(!isHeal)num -= armor;
-		if(!isHeal)if(armor > 0)SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getGUID()+"", target.getGUID()+","+armor);
-		//dégats finaux
-		if(num < 1)num=0;
-		
-		// Début Formule pour les MOBs
-		if(caster.getPersonnage() == null && !caster.isPerco())
-		{
-			if(caster.getMob().getTemplate().getID() == 116)//Sacrifié Dommage = PDV*2
-			{
-				return (int)((num/25)*caster.getPDVMAX());
-			}else
-			{
-			int niveauMob = caster.get_lvl();
-			double CalculCoef = ((niveauMob*0.5)/100);
-			int Multiplicateur = (int) Math.ceil(CalculCoef);
-			return (int)num*Multiplicateur;
-			}
-		}
-		// Fin Formule pour les MOBs
-		else
-		{
-			//Perte de 10% des PDV MAX par points de degat 10 PDV = 1PDV max en moins
-			if(target.getPersonnage()!= null) target.removePDVMAX((int)Math.floor(num/10));
-			return (int)num;
-		}
-	}
+            if ((caster.getSpellValueBool(392) == true) && ArmeType == 2)//ARC
+            {
+                bonusSkill = caster.getMaitriseDmg(392);
+            }
+            if ((caster.getSpellValueBool(390) == true) && ArmeType == 4)//BATON
+            {
+                bonusSkill = caster.getMaitriseDmg(390);
+            }
+            if ((caster.getSpellValueBool(391) == true) && ArmeType == 6)//EPEE
+            {
+                bonusSkill = caster.getMaitriseDmg(391);
+            }
+            if ((caster.getSpellValueBool(393) == true) && ArmeType == 7)//MARTEAUX
+            {
+                bonusSkill = caster.getMaitriseDmg(393);
+            }
+            if ((caster.getSpellValueBool(394) == true) && ArmeType == 3)//BAGUETTE
+            {
+                bonusSkill = caster.getMaitriseDmg(394);
+            }
+            if ((caster.getSpellValueBool(395) == true) && ArmeType == 5)//DAGUES
+            {
+                bonusSkill = caster.getMaitriseDmg(395);
+            }
+            if ((caster.getSpellValueBool(396) == true) && ArmeType == 8)//PELLE
+            {
+                bonusSkill = caster.getMaitriseDmg(396);
+            }
+            if ((caster.getSpellValueBool(397) == true) && ArmeType == 19)//HACHE
+            {
+                bonusSkill = caster.getMaitriseDmg(397);
+            }
+			a = (((100+bonusSkill)/100)*((100+bonusBreed)/100));
+        }
+
+        num = a * (jet * ((100 + statC + perdomC + (multiplier * 100)) / 100)) + domC;//dï¿½gats bruts
+
+        //Poisons
+        if (spellid != -1)
+        {
+            switch (spellid)
+            {
+
+                case 66:
+                    statC = caster.getTotalStats().getEffect(Constants.STATS_ADD_AGIL);
+                    num = (jet * ((100 + statC + perdomC + (multiplier * 100)) / 100)) + domC;
+                    if (target.hasBuff(105))
+                    {
+                        SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getGUID() + "", target.getGUID() + "," + target.getBuff(105).getValue());
+                        return 0;
+                    }
+                    if (target.hasBuff(184))
+                    {
+                        SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getGUID() + "", target.getGUID() + "," + target.getBuff(184).getValue());
+                        return 0;
+                    }
+                    return (int) num;
+
+                case 71:
+                case 196:
+                case 219:
+                    statC = caster.getTotalStats().getEffect(Constants.STATS_ADD_FORC);
+                    num = (jet * ((100 + statC + perdomC + (multiplier * 100)) / 100)) + domC;
+                    if (target.hasBuff(105))
+                    {
+                        SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getGUID() + "", target.getGUID() + "," + target.getBuff(105).getValue());
+                        return 0;
+                    }
+                    if (target.hasBuff(184))
+                    {
+                        SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getGUID() + "", target.getGUID() + "," + target.getBuff(184).getValue());
+                        return 0;
+                    }
+                    return (int) num;
+
+                case 181:
+                case 200:
+                    statC = caster.getTotalStats().getEffect(Constants.STATS_ADD_INTE);
+                    num = (jet * ((100 + statC + perdomC + (multiplier * 100)) / 100)) + domC;
+                    if (target.hasBuff(105))
+                    {
+                        SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getGUID() + "", target.getGUID() + "," + target.getBuff(105).getValue());
+                        return 0;
+                    }
+                    if (target.hasBuff(184))
+                    {
+                        SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getGUID() + "", target.getGUID() + "," + target.getBuff(184).getValue());
+                        return 0;
+                    }
+                    return (int) num;
+            }
+        }
+        //Renvoie
+        int renvoie = target.getTotalStatsLessBuff().getEffect(Constants.STATS_RETDOM);
+        if (renvoie > 0 && !isHeal)
+        {
+            if (renvoie > num) renvoie = (int) num;
+            num -= renvoie;
+            SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 107, "-1", target.getGUID() + "," + renvoie);
+            if (renvoie > caster.getPDV()) renvoie = caster.getPDV();
+            if (num < 1) num = 0;
+            caster.removePDV(renvoie);
+            SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 100, caster.getGUID() + "", caster.getGUID() + ",-" + renvoie);
+        }
+
+        if (!isHeal) num -= resfT;//resis fixe
+        int reduc = (int) ((num / (float) 100) * respT);//Reduc %resis
+        if (!isHeal) num -= reduc;
+
+        int armor = getArmorResist(target, statID);
+        if (!isHeal) num -= armor;
+        if (!isHeal) if (armor > 0)
+            SocketManager.GAME_SEND_GA_PACKET_TO_FIGHT(fight, 7, 105, caster.getGUID() + "", target.getGUID() + "," + armor);
+        //dï¿½gats finaux
+        if (num < 1) num = 0;
+
+        // Dï¿½but Formule pour les MOBs
+        if (caster.getPersonnage() == null && !caster.isPerco())
+        {
+            if (caster.getMob().getTemplate().getID() == 116)//Sacrifiï¿½ Dommage = PDV*2
+            {
+                return (int) ((num / 25) * caster.getPDVMAX());
+            }
+            else
+            {
+                int niveauMob = caster.get_lvl();
+                double CalculCoef = ((niveauMob * 0.5) / 100);
+                int Multiplicateur = (int) Math.ceil(CalculCoef);
+                return (int) num * Multiplicateur;
+            }
+        }
+        // Fin Formule pour les MOBs
+        else
+        {
+            //Perte de 10% des PDV MAX par points de degat 10 PDV = 1PDV max en moins
+            if (target.getPersonnage() != null) target.removePDVMAX((int) Math.floor(num / 10));
+            return (int) num;
+        }
+    }
 
 	public static int calculZaapCost(Carte map1,Carte map2)
 	{

@@ -27,6 +27,8 @@ import objects.Monstre.MobGroup;
 import objects.NPC_tmpl.NPC;
 import objects.Objet.ObjTemplate;
 import objects.Personnage.Group;
+import objects.Quest;
+import objects.QuestObjective;
 import objects.Trunk;
 
 public class SocketManager {
@@ -2150,9 +2152,9 @@ public class SocketManager {
 			GameServer.addToSockLog("Game: Send>>"+packet);
 	}
 	
-	public static void GAME_SEND_EMOTE_LIST(Personnage perso,String s, String s1)
+	public static void GAME_SEND_EMOTE_LIST(Personnage perso,String _emotes, String s1)
 	{
-		String packet = "eL"+s+"|"+s1;
+		String packet = "eL"+_emotes+"|"+s1;
 		send(perso, packet);
 		if (Ancestra.CONFIG_DEBUG)
 			GameServer.addToSockLog("Game: Send>>" + packet);
@@ -2607,4 +2609,61 @@ public class SocketManager {
 			GameServer.addToSockLog("Game: Fight: Send>>"+packet.toString());
 	}
 	
+	public static void GAME_SEND_JR_PACKET(final Personnage perso, final int id)
+	{
+		String packet = "JR";
+		for(final StatsMetier sm : perso.getMetiers().values()) 
+		{
+			if(sm != null && sm.getTemplate().getId() == id) 
+			{
+				packet += id;
+			}	
+		}
+		send(perso,packet);
+	}
+	
+	public static void GAME_SEND_QUEST_LIST_PACKET(final Personnage player) {
+		final StringBuilder packet = new StringBuilder();
+		packet.append("QL1");
+		boolean isFirst = true;
+		int sortOrder = 0;
+		for(final Quest quest : player.getQuestList())
+		{
+			if(!isFirst) 
+				packet.append('|');
+			sortOrder++;
+			if(!quest.isFinished())
+				packet.append(quest.getId()).append(";0;").append(sortOrder);
+			else
+				packet.append(quest.getId()).append(";1;").append(sortOrder);
+			isFirst = false;
+		}
+		send(player, packet.toString());
+	}
+
+	public static void GAME_SEND_QUEST_STEP_PACKET(final Personnage player, final String preparePacket) {
+		final StringBuilder packet = new StringBuilder();
+		packet.append("QS");
+		boolean isFirst = true;
+		final Quest quest = player.getQuest(Integer.parseInt(preparePacket));
+		if(quest == null)
+			return;
+		if(quest.getCurStep().getId() <= 0)
+			return;
+		packet.append(quest.getId()).append('|');
+		packet.append(quest.getCurStep()).append('|');
+		for(final QuestObjective objective : quest.getSteps().get(quest.getCurStep().getId()).getObjectives())
+		{
+			if(!isFirst) 
+				packet.append(';');
+			packet.append(objective.getId()).append(',');
+			packet.append(objective.isFinished()?1:0).append(';');
+			isFirst = false;
+		}
+		packet.append('|');
+		packet.append(player.getStepsFinished(quest)).append('|');
+		packet.append(player.getStepsToRealise(quest)).append('|');
+		packet.append(quest.getCurStep().getDialogId());
+		send(player, packet.toString());
+    }
 }

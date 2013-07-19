@@ -147,6 +147,9 @@ public class Personnage {
 	//Marchand
 	public boolean _seeSeller = false;
 	private Map<Integer , Integer> _storeItems = new TreeMap<Integer, Integer>();//<ObjID, Prix>
+	//Quest
+	private ArrayList<Quest> _questList = new ArrayList<Quest>();
+	private int _lastItemUsed;
 	
 	public static class traque 
 	{
@@ -683,6 +686,7 @@ public class Personnage {
 			Constants.onLevelUpSpells(perso, a);
 		}
 		perso._sortsPlaces = Constants.getStartSortsPlaces(classe);
+		
 		SocketManager.GAME_SEND_WELCOME(perso);
 		if(!SQLManager.ADD_PERSO_IN_BDD(perso))
 			return null;
@@ -866,7 +870,7 @@ public class Personnage {
 		if(_guildMember != null)SocketManager.GAME_SEND_gS_PACKET(this,_guildMember);
 		SocketManager.GAME_SEND_ZONE_ALLIGN_STATUT(out);
 		SocketManager.GAME_SEND_SPELL_LIST(this);
-		SocketManager.GAME_SEND_EMOTE_LIST(this,_emotes,"0");
+		SocketManager.GAME_SEND_EMOTE_LIST(this,_emotes ,"0");
 		SocketManager.GAME_SEND_RESTRICTIONS(out, "6bk");
 		SocketManager.GAME_SEND_Ow_PACKET(this);
 		SocketManager.GAME_SEND_SEE_FRIEND_CONNEXION(out,_showFriendConnection);
@@ -3552,7 +3556,7 @@ public class Personnage {
 	public void toggleWings(char c)
 	{
 		if(_align == Constants.ALIGNEMENT_NEUTRE)return;
-		int hloose = _honor*5/100;//FIXME: perte de X% honneur
+		int hloose = _honor/100*5;
 		switch(c)
 		{
 			case '*':
@@ -3560,16 +3564,15 @@ public class Personnage {
 			return;
 			case '+':
 				setShowWings(true);
-				SocketManager.GAME_SEND_STATS_PACKET(this);
-				SQLManager.SAVE_PERSONNAGE(this, false);
 			break;
 			case '-':
 				setShowWings(false);
 				_honor -= hloose;
-				SocketManager.GAME_SEND_STATS_PACKET(this);
-				SQLManager.SAVE_PERSONNAGE(this, false);
 			break;
 		}
+		SocketManager.GAME_SEND_STATS_PACKET(this);
+		SocketManager.GAME_SEND_ERASE_ON_MAP_TO_MAP(_curCarte, _GUID);
+		SocketManager.GAME_SEND_ADD_PLAYER_TO_MAP(_curCarte, this);
 	}
 	
 	public void addHonor(int winH)
@@ -3993,5 +3996,82 @@ public class Personnage {
 		_isCraftingWith = 0;
 		_isCraftingWithskID = 0;
 		set_hasEndFight(false);
+		_lastItemUsed = 0;
 	}
+	
+	public ArrayList<Quest> getQuestList() {
+	    return _questList;
+    }
+
+	public Quest getQuest(int id) {
+		for(Quest quest : _questList)
+		{
+			if(quest.getId() == id)
+			{
+				return quest;
+			}
+		}
+		return null;
+    }
+
+	public String getStepsFinished(Quest quest) {
+		StringBuilder packet = new StringBuilder(5*quest.getSteps().size());
+		boolean isFirst = true;
+		for (int i = 0; i < quest.getCurStep().getOrder(); i--)
+		{
+			if(!isFirst) 
+				packet.append(';');
+			
+			packet.append(quest.getSteps().get(i).getId());
+			isFirst = false;
+		}
+		return packet.toString();
+    }
+
+	public String getStepsToRealise(Quest quest) {
+		StringBuilder packet = new StringBuilder(5*quest.getSteps().size());
+		boolean isFirst = true;
+		for (int i = 0; i < quest.getCurStep().getOrder(); i++)
+		{
+			if(!isFirst) 
+				packet.append(';');
+
+			packet.append(quest.getSteps().get(i).getId());			
+			isFirst = false;
+		}
+		return packet.toString();
+    }
+
+	public void checkQuests() {
+	    for(Quest quest : _questList)
+	    {
+	    	if(quest.isFinished()) 
+	    	{
+	    		continue;
+	    	}
+	    	quest.check(this);
+	    }
+    }
+	
+	public void applyQuest(Object object) {//On ne spécifie pas le type de l'objet car c'soit un string soit une liste
+		for(Quest quest : _questList)
+	    {
+	    	if(quest.isFinished()) 
+	    	{
+	    		continue;
+	    	}
+	    	for(QuestObjective objective : quest.getCurStep().getObjectives())
+	    	{
+	    		objective.fill(this, object);
+	    	}
+	    }
+    }
+	
+	public void setLastItemUsed(int _lastItemUsed) {
+	    this._lastItemUsed = _lastItemUsed;
+    }
+
+	public int getLastItemUsed() {
+	    return _lastItemUsed;
+    }
 }

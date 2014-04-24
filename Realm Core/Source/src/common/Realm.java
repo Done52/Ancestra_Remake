@@ -54,7 +54,7 @@ public class Realm
 		Accounts2.put(acc.get_name().toLowerCase(), acc.get_GUID());
 	}
 	
-	public static Map<Integer, Account> getAccountsMap()
+	public static ConcurrentMap<Integer, Account> getAccountsMap()
 	{
 		return Accounts;
 	}

@@ -1,16 +1,16 @@
 package common;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import objects.Account;
 import objects.GameServer;
 
 public class Realm
 {
-	private static Map<Integer, Account> Accounts = new TreeMap<Integer,Account>();//by GUID
-	private static Map<String, Integer> Accounts2 = new TreeMap<String, Integer>();//by Name
-	public static Map<Integer, GameServer> GameServers = new TreeMap<Integer, GameServer>();
+	private static ConcurrentMap<Integer, Account> Accounts = new ConcurrentHashMap<Integer,Account>(16, 0.75f, 3);//by GUID
+	private static ConcurrentMap<String, Integer> Accounts2 = new ConcurrentHashMap<String, Integer>(16, 0.75f, 3);//by Name
+	public static ConcurrentMap<Integer, GameServer> GameServers = new ConcurrentHashMap<Integer, GameServer>(16, 0.75f, 3);
 	public static String BAN_IP = "";
 	
 	public static boolean IPcompareToBanIP(String ip)
